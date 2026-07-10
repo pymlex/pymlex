@@ -23,5 +23,3 @@ AI Analyst Intern at T-Bank. Ex-Lecturer and TA at MEPhI Online Education.
 - **[pymlex/ai-text-detector-api](https://github.com/pymlex/ai-text-detector-api)** — A FastAPI-based API for Desklib AI Text Detector inference, runnable in Google Colab using ngrok for public access. · 🍴 1
 
 <!-- FORKED:END -->
-
-The project is under GPL-3.0 license.
