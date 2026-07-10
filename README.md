@@ -6,29 +6,27 @@ Interests: NLP, Safe AI.
 
 [supercomputers.mephi.ru](https://supercomputers.mephi.ru/)
 
-## Community picks
+## Community engagement
 
-Repositories starred or forked by [@pymlex](https://github.com/pymlex). Updated automatically via GitHub Actions.
+Repositories from [@pymlex](https://github.com/pymlex) that other users starred or forked. Updated automatically via GitHub Actions.
 
 <!-- STARRED:START -->
 
-### Starred
+### Starred by users
 
-- **[firecrawl/firecrawl](https://github.com/firecrawl/firecrawl)** — The API to search, scrape, and interact with the web at scale. 🔥 · ⭐ 148850
-- **[umerov1999/Fenrir-for-VK](https://github.com/umerov1999/Fenrir-for-VK)** — Fenrir-for-VK · ⭐ 124
-- **[HelpFreedom/youthub](https://github.com/HelpFreedom/youthub)** — YouHub — console YouTube client. TUI grid, custom ffplay-yt player, SABR streaming, SponsorBlock, 1080p. · ⭐ 93
-- **[ahdr3w/SMILES-2026-Hallucination-Detection](https://github.com/ahdr3w/SMILES-2026-Hallucination-Detection)** — This repository is for SMILES students competition · ⭐ 13
-- **[ShadarRim/dc2024](https://github.com/ShadarRim/dc2024)** — No description · ⭐ 44
-- **[mrgick/duck_chat](https://github.com/mrgick/duck_chat)** — Reverse engineered DuckDuckGo AI chat API client. · ⭐ 109
-- **[Dimitrioum/ml-data-analysis-book](https://github.com/Dimitrioum/ml-data-analysis-book)** — No description · ⭐ 3
+- **[pymlex/ml-course-for-schools](https://github.com/pymlex/ml-course-for-schools)** — A repository of lectures on machine learning and data analysis from scratch for high school students. · ⭐ 2
+- **[pymlex/datalab-pdf2md-pipeline](https://github.com/pymlex/datalab-pdf2md-pipeline)** — A Colab-ready example that demonstrates converting PDFs to high-quality Markdown using datalab/marker. · ⭐ 1
+- **[pymlex/mephi-library-search](https://github.com/pymlex/mephi-library-search)** — A deep semantic search system for 2,000 books from the BITI MEPhI library, utilizing ruSciBERT embeddings, PCA, and K-Means, wrapped in FastAPI and Telebot. · ⭐ 1
+- **[pymlex/ai-text-detector-api](https://github.com/pymlex/ai-text-detector-api)** — A FastAPI-based API for Desklib AI Text Detector inference, runnable in Google Colab using ngrok for public access. · ⭐ 1
 
 <!-- STARRED:END -->
 
 <!-- FORKED:START -->
 
-### Forked
+### Forked by users
 
-- **[pymlex/SMILES-2026-Hallucination-Detection](https://github.com/pymlex/SMILES-2026-Hallucination-Detection)** — Hallucination detection using Qwen2.5-0.5B for SMILES-2026. · fork of [ahdr3w/SMILES-2026-Hallucination-Detection](https://github.com/ahdr3w/SMILES-2026-Hallucination-Detection) · ⭐ 0
+- **[pymlex/mephi-library-search](https://github.com/pymlex/mephi-library-search)** — A deep semantic search system for 2,000 books from the BITI MEPhI library, utilizing ruSciBERT embeddings, PCA, and K-Means, wrapped in FastAPI and Telebot. · 🍴 1
+- **[pymlex/ai-text-detector-api](https://github.com/pymlex/ai-text-detector-api)** — A FastAPI-based API for Desklib AI Text Detector inference, runnable in Google Colab using ngrok for public access. · 🍴 1
 
 <!-- FORKED:END -->
 

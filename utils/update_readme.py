@@ -1,9 +1,9 @@
 import json
-import os
 import urllib.request
 
 
 USERNAME = "pymlex"
+PROFILE_REPO = "pymlex/pymlex"
 README_PATH = "README.md"
 STARRED_START = "<!-- STARRED:START -->"
 STARRED_END = "<!-- STARRED:END -->"
@@ -36,48 +36,51 @@ def paginate(url: str, token: str) -> list[dict]:
     return items
 
 
-def fetch_repo(full_name: str, token: str) -> dict:
-    """Fetch a single repository with fork metadata."""
-    request = urllib.request.Request(
-        f"https://api.github.com/repos/{full_name}",
-        headers=github_headers(token),
+def owned_repos(token: str) -> list[dict]:
+    """Return public repositories owned by the profile user."""
+    repos = paginate(
+        f"https://api.github.com/users/{USERNAME}/repos?per_page=100&type=owner&sort=updated",
+        token,
     )
-    with urllib.request.urlopen(request) as response:
-        return json.loads(response.read().decode())
+    return [repo for repo in repos if repo["full_name"] != PROFILE_REPO]
 
 
-def format_repo_line(repo: dict, fork_label: str | None = None) -> str:
-    """Render one repository as a Markdown list item."""
+def format_starred_line(repo: dict) -> str:
+    """Render a repository starred by the community."""
     name = repo["full_name"]
     url = repo["html_url"]
     description = repo.get("description") or "No description"
     stars = repo["stargazers_count"]
-    suffix = f" · {fork_label}" if fork_label else ""
-    return f"- **[{name}]({url})** — {description}{suffix} · ⭐ {stars}"
+    return f"- **[{name}]({url})** — {description} · ⭐ {stars}"
+
+
+def format_forked_line(repo: dict) -> str:
+    """Render a repository forked by the community."""
+    name = repo["full_name"]
+    url = repo["html_url"]
+    description = repo.get("description") or "No description"
+    forks = repo["forks_count"]
+    return f"- **[{name}]({url})** — {description} · 🍴 {forks}"
 
 
 def build_starred_section(repos: list[dict]) -> str:
-    """Build the starred repositories Markdown block."""
-    lines = [STARRED_START, "", "### Starred", ""]
+    """Build repositories starred by other users."""
+    lines = [STARRED_START, "", "### Starred by users", ""]
     if repos:
-        lines.extend(format_repo_line(repo) for repo in repos)
+        lines.extend(format_starred_line(repo) for repo in repos)
     else:
-        lines.append("_No starred repositories yet._")
+        lines.append("_No stars on your repositories yet._")
     lines.extend(["", STARRED_END])
     return "\n".join(lines)
 
 
 def build_forked_section(repos: list[dict]) -> str:
-    """Build the forked repositories Markdown block."""
-    lines = [FORKED_START, "", "### Forked", ""]
+    """Build repositories forked by other users."""
+    lines = [FORKED_START, "", "### Forked by users", ""]
     if repos:
-        for repo in repos:
-            parent = repo.get("parent") or {}
-            parent_name = parent.get("full_name")
-            fork_label = f"fork of [{parent_name}]({parent['html_url']})" if parent_name else None
-            lines.append(format_repo_line(repo, fork_label))
+        lines.extend(format_forked_line(repo) for repo in repos)
     else:
-        lines.append("_No forked repositories yet._")
+        lines.append("_No forks of your repositories yet._")
     lines.extend(["", FORKED_END])
     return "\n".join(lines)
 
@@ -90,20 +93,18 @@ def replace_section(text: str, start: str, end: str, replacement: str) -> str:
 
 
 def update_readme(token: str, readme_path: str = README_PATH) -> bool:
-    """Refresh starred and forked repository sections in README.md."""
-    starred = paginate(
-        f"https://api.github.com/users/{USERNAME}/starred?per_page=100&sort=updated",
-        token,
+    """Refresh community engagement sections in README.md."""
+    repos = owned_repos(token)
+    starred = sorted(
+        [repo for repo in repos if repo["stargazers_count"] > 0],
+        key=lambda repo: repo["stargazers_count"],
+        reverse=True,
     )
-    all_repos = paginate(
-        f"https://api.github.com/users/{USERNAME}/repos?per_page=100&sort=updated",
-        token,
+    forked = sorted(
+        [repo for repo in repos if repo["forks_count"] > 0],
+        key=lambda repo: repo["forks_count"],
+        reverse=True,
     )
-    forked = [
-        fetch_repo(repo["full_name"], token)
-        for repo in all_repos
-        if repo.get("fork")
-    ]
 
     with open(readme_path, encoding="utf-8") as file:
         readme = file.read()

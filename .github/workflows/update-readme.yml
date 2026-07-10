@@ -33,6 +33,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "README is up to date"
           else
-            git commit -m "Update starred and forked repositories"
+            git commit -m "Update community starred and forked repositories"
             git push
           fi
