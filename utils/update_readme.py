@@ -12,7 +12,15 @@ STARRED_END = "<!-- STARRED:END -->"
 FORKED_START = "<!-- FORKED:START -->"
 FORKED_END = "<!-- FORKED:END -->"
 TOP_LANGUAGE_COUNT = 8
-MIN_LANGUAGE_PERCENT = 1.0
+MIN_LANGUAGE_PERCENT = 0.05
+LANGUAGE_ALIASES = {
+    "Jupyter Notebook": "Python",
+}
+
+
+def normalize_language(language: str) -> str:
+    """Map GitHub linguist labels to project language groups."""
+    return LANGUAGE_ALIASES.get(language, language)
 
 
 def github_headers(token: str) -> dict[str, str]:
@@ -48,9 +56,9 @@ def paginate(url: str, token: str) -> list[dict]:
 
 
 def owned_repos(token: str) -> list[dict]:
-    """Return public repositories owned by the profile user."""
+    """Return all public repositories for the profile user."""
     repos = paginate(
-        f"https://api.github.com/users/{USERNAME}/repos?per_page=100&type=owner&sort=updated",
+        f"https://api.github.com/users/{USERNAME}/repos?per_page=100",
         token,
     )
     return [repo for repo in repos if repo["full_name"] != PROFILE_REPO]
@@ -71,7 +79,8 @@ def aggregate_languages(repos: list[dict], token: str) -> dict[str, float]:
     for repo in repos:
         languages = repo_languages(repo["full_name"], token)
         for language, bytes_count in languages.items():
-            totals[language] = totals.get(language, 0) + bytes_count
+            normalized = normalize_language(language)
+            totals[normalized] = totals.get(normalized, 0) + bytes_count
 
     total_bytes = sum(totals.values())
     if total_bytes == 0:
@@ -99,14 +108,17 @@ def aggregate_languages(repos: list[dict], token: str) -> dict[str, float]:
     return grouped
 
 
-def build_languages_section(language_shares: dict[str, float]) -> str:
+def build_languages_section(
+    language_shares: dict[str, float],
+    repo_count: int,
+) -> str:
     """Build a Mermaid pie chart for language distribution."""
     lines = [
         LANGUAGES_START,
         "",
         "```mermaid",
         "pie showData",
-        "    title Language distribution across repositories (%)",
+        f"    title Language distribution across {repo_count} repositories (%)",
     ]
     if language_shares:
         for language, share in sorted(
@@ -191,7 +203,7 @@ def update_readme(token: str, readme_path: str = README_PATH) -> bool:
         readme,
         LANGUAGES_START,
         LANGUAGES_END,
-        build_languages_section(language_shares),
+        build_languages_section(language_shares, len(repos)),
     )
     updated = replace_section(
         updated,
