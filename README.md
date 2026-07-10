@@ -1,7 +1,3 @@
-# Alex Zyukov
-
-AI Analyst Intern at T-Bank. Ex-Lecturer and TA at MEPhI Online Education.
-
 ## Community engagement
 
 <!-- STARRED:START -->
