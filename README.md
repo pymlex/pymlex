@@ -2,13 +2,7 @@
 
 AI Analyst Intern at T-Bank. Ex-Lecturer and TA at MEPhI Online Education.
 
-Interests: NLP, Safe AI.
-
-[supercomputers.mephi.ru](https://supercomputers.mephi.ru/)
-
 ## Community engagement
-
-Repositories from [@pymlex](https://github.com/pymlex) that other users starred or forked. Updated automatically via GitHub Actions.
 
 <!-- STARRED:START -->
 
