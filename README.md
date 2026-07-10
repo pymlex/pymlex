@@ -1,17 +1,3 @@
-<!-- LANGUAGES:START -->
-
-```mermaid
-pie showData
-    title Language distribution across 76 repositories (%)
-    "Python" : 99.5
-    "C++" : 0.2
-    "C" : 0.1
-    "Other" : 0.1
-    "TeX" : 0.1
-```
-
-<!-- LANGUAGES:END -->
-
 ## Community engagement
 
 <!-- STARRED:START -->
