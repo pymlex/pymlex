@@ -1,3 +1,15 @@
+<!-- LANGUAGES:START -->
+
+```mermaid
+pie showData
+    title Language distribution across repositories (%)
+    "Jupyter Notebook" : 98.3
+    "Python" : 1.2
+    "Other" : 0.5
+```
+
+<!-- LANGUAGES:END -->
+
 ## Community engagement
 
 <!-- STARRED:START -->
