@@ -5,10 +5,8 @@ import urllib.request
 USERNAME = "pymlex"
 PROFILE_REPO = "pymlex/pymlex"
 README_PATH = "README.md"
-STARRED_START = "<!-- STARRED:START -->"
-STARRED_END = "<!-- STARRED:END -->"
-FORKED_START = "<!-- FORKED:START -->"
-FORKED_END = "<!-- FORKED:END -->"
+PROJECTS_START = "<!-- PROJECTS:START -->"
+PROJECTS_END = "<!-- PROJECTS:END -->"
 
 
 def github_headers(token: str) -> dict[str, str]:
@@ -45,43 +43,41 @@ def owned_repos(token: str) -> list[dict]:
     return [repo for repo in repos if repo["full_name"] != PROFILE_REPO]
 
 
-def format_starred_line(repo: dict) -> str:
-    """Render a repository starred by the community."""
+def engaged_repos(repos: list[dict]) -> list[dict]:
+    """Return repositories with at least one star or fork."""
+    return [
+        repo for repo in repos
+        if repo["stargazers_count"] > 0 or repo["forks_count"] > 0
+    ]
+
+
+def format_stats(repo: dict) -> str:
+    """Render star and fork counters for one repository."""
+    stats: list[str] = []
+    if repo["stargazers_count"] > 0:
+        stats.append(f"⭐ {repo['stargazers_count']}")
+    if repo["forks_count"] > 0:
+        stats.append(f"🍴 {repo['forks_count']}")
+    return " ".join(stats)
+
+
+def format_project_line(repo: dict) -> str:
+    """Render one project entry for the README list."""
     name = repo["full_name"]
     url = repo["html_url"]
     description = repo.get("description") or "No description"
-    stars = repo["stargazers_count"]
-    return f"- **[{name}]({url})** — {description} · ⭐ {stars}"
+    stats = format_stats(repo)
+    return f"- **[{name}]({url})** — {description} · {stats}"
 
 
-def format_forked_line(repo: dict) -> str:
-    """Render a repository forked by the community."""
-    name = repo["full_name"]
-    url = repo["html_url"]
-    description = repo.get("description") or "No description"
-    forks = repo["forks_count"]
-    return f"- **[{name}]({url})** — {description} · 🍴 {forks}"
-
-
-def build_starred_section(repos: list[dict]) -> str:
-    """Build repositories starred by other users."""
-    lines = [STARRED_START, "", "### Starred by users", ""]
+def build_projects_section(repos: list[dict]) -> str:
+    """Build the Projects section for README.md."""
+    lines = [PROJECTS_START, ""]
     if repos:
-        lines.extend(format_starred_line(repo) for repo in repos)
+        lines.extend(format_project_line(repo) for repo in repos)
     else:
-        lines.append("_No stars on your repositories yet._")
-    lines.extend(["", STARRED_END])
-    return "\n".join(lines)
-
-
-def build_forked_section(repos: list[dict]) -> str:
-    """Build repositories forked by other users."""
-    lines = [FORKED_START, "", "### Forked by users", ""]
-    if repos:
-        lines.extend(format_forked_line(repo) for repo in repos)
-    else:
-        lines.append("_No forks of your repositories yet._")
-    lines.extend(["", FORKED_END])
+        lines.append("_No projects with stars or forks yet._")
+    lines.extend(["", PROJECTS_END])
     return "\n".join(lines)
 
 
@@ -93,16 +89,11 @@ def replace_section(text: str, start: str, end: str, replacement: str) -> str:
 
 
 def update_readme(token: str, readme_path: str = README_PATH) -> bool:
-    """Refresh community engagement sections in README.md."""
+    """Refresh the Projects section in README.md."""
     repos = owned_repos(token)
-    starred = sorted(
-        [repo for repo in repos if repo["stargazers_count"] > 0],
-        key=lambda repo: repo["stargazers_count"],
-        reverse=True,
-    )
-    forked = sorted(
-        [repo for repo in repos if repo["forks_count"] > 0],
-        key=lambda repo: repo["forks_count"],
+    projects = sorted(
+        engaged_repos(repos),
+        key=lambda repo: (repo["stargazers_count"], repo["forks_count"]),
         reverse=True,
     )
 
@@ -111,15 +102,9 @@ def update_readme(token: str, readme_path: str = README_PATH) -> bool:
 
     updated = replace_section(
         readme,
-        STARRED_START,
-        STARRED_END,
-        build_starred_section(starred),
-    )
-    updated = replace_section(
-        updated,
-        FORKED_START,
-        FORKED_END,
-        build_forked_section(forked),
+        PROJECTS_START,
+        PROJECTS_END,
+        build_projects_section(projects),
     )
 
     if updated == readme:
