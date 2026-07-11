@@ -61,13 +61,20 @@ def escape_table_cell(text: str) -> str:
     return text.replace("|", "\\|").replace("\n", " ")
 
 
+def format_count_cell(count: int, emoji: str) -> str:
+    """Render a table cell with emoji repeated by count."""
+    if count == 0:
+        return ""
+    return emoji * count
+
+
 def format_project_row(repo: dict) -> str:
     """Render one project row for the README table."""
     short_name = repo_short_name(repo["full_name"])
     url = repo["html_url"]
     description = escape_table_cell(repo.get("description") or "No description")
-    stars = repo["stargazers_count"]
-    forks = repo["forks_count"]
+    stars = format_count_cell(repo["stargazers_count"], "⭐")
+    forks = format_count_cell(repo["forks_count"], "🍴")
     return f"| [{short_name}]({url}) | {description} | {stars} | {forks} |"
 
 
