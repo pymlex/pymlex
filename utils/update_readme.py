@@ -84,7 +84,7 @@ def build_projects_section(repos: list[dict]) -> str:
         PROJECTS_START,
         "",
         "| Project | Description | Stars | Forks |",
-        "| --- | --- | ---: | ---: |",
+        "| --- | --- | :---: | :---: |",
     ]
     if repos:
         lines.extend(format_project_row(repo) for repo in repos)
