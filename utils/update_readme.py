@@ -51,32 +51,38 @@ def engaged_repos(repos: list[dict]) -> list[dict]:
     ]
 
 
-def format_stats(repo: dict) -> str:
-    """Render star and fork counters for one repository."""
-    stats: list[str] = []
-    if repo["stargazers_count"] > 0:
-        stats.append(f"⭐ {repo['stargazers_count']}")
-    if repo["forks_count"] > 0:
-        stats.append(f"🍴 {repo['forks_count']}")
-    return " ".join(stats)
+def repo_short_name(full_name: str) -> str:
+    """Return repository name without the owner prefix."""
+    return full_name.split("/", 1)[1]
 
 
-def format_project_line(repo: dict) -> str:
-    """Render one project entry for the README list."""
-    name = repo["full_name"]
+def escape_table_cell(text: str) -> str:
+    """Escape characters that break Markdown table cells."""
+    return text.replace("|", "\\|").replace("\n", " ")
+
+
+def format_project_row(repo: dict) -> str:
+    """Render one project row for the README table."""
+    short_name = repo_short_name(repo["full_name"])
     url = repo["html_url"]
-    description = repo.get("description") or "No description"
-    stats = format_stats(repo)
-    return f"- **[{name}]({url})** — {description} · {stats}"
+    description = escape_table_cell(repo.get("description") or "No description")
+    stars = repo["stargazers_count"]
+    forks = repo["forks_count"]
+    return f"| [{short_name}]({url}) | {description} | {stars} | {forks} |"
 
 
 def build_projects_section(repos: list[dict]) -> str:
     """Build the Projects section for README.md."""
-    lines = [PROJECTS_START, ""]
+    lines = [
+        PROJECTS_START,
+        "",
+        "| Project | Description | Stars | Forks |",
+        "| --- | --- | ---: | ---: |",
+    ]
     if repos:
-        lines.extend(format_project_line(repo) for repo in repos)
+        lines.extend(format_project_row(repo) for repo in repos)
     else:
-        lines.append("_No projects with stars or forks yet._")
+        lines.append("| _No projects with stars or forks yet._ | | | |")
     lines.extend(["", PROJECTS_END])
     return "\n".join(lines)
 
